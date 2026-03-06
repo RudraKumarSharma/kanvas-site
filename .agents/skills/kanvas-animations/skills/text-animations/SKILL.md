@@ -80,11 +80,20 @@ No paid SplitText plugin — split manually with vanilla JS:
 // Utility — wrap each char in a span
 const splitChars = (el) => {
     const text = el.textContent;
-    el.innerHTML = text.split('').map(char =>
-        char === ' '
-            ? '<span class="char" aria-hidden="true">&nbsp;</span>'
-            : `<span class="char" aria-hidden="true">${char}</span>`
-    ).join('');
+
+    // Clear existing content before rebuilding safely
+    el.textContent = '';
+
+    text.split('').forEach((char) => {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.setAttribute('aria-hidden', 'true');
+
+        // Preserve spaces as non-breaking spaces for layout
+        span.textContent = char === ' ' ? '\u00A0' : char;
+
+        el.appendChild(span);
+    });
     el.setAttribute('aria-label', text);   // preserve accessibility
 };
 
